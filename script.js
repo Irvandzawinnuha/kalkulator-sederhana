@@ -1,17 +1,29 @@
+let currentInput = '';
+
 function clearDisplay() {
+    currentInput = '';
     document.getElementById('display').value = '';
 }
 
 function appendToDisplay(value) {
-    const display = document.getElementById('display');
-    display.value += value;
+    currentInput += value;
+    document.getElementById('display').value = currentInput;
 }
 
 function calculateResult() {
-    const display = document.getElementById('display');
     try {
-        display.value = eval(display.value);
+        const result = evaluateExpression(currentInput);
+        document.getElementById('display').value = result;
+        currentInput = result; 
     } catch (error) {
-        display.value = 'Error';
+        document.getElementById('display').value = 'Error';
+        currentInput = '';
     }
+}
+
+function evaluateExpression(expression) {
+
+    expression = expression.replace(/(\d+)\^(\d+)/g, (match, base, exponent) => Math.pow(base, exponent));
+    expression = expression.replace(/√(\d+)/g, (match, number) => Math.sqrt(number));
+    return Function('"use strict";return (' + expression + ')')();
 }
